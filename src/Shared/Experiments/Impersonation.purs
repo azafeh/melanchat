@@ -12,11 +12,12 @@ import Data.Tuple (Tuple(..))
 import Flame (Html)
 import Flame.Html.Attribute as HA
 import Flame.Html.Element as HE
+import Shared.Experiments.Types
 import Shared.Avatar as SA
 import Shared.Options.File (imageBasePath)
 import Shared.Unsafe as SU
 
-joined :: ImpresonationProfile -> Html ChatExperimentMessage
+joined :: ImpersonationProfile -> Html ChatExperimentMessage
 joined profile = HE.div (HA.class' "exit-impersonation") [
       HE.strong_ "You have already joined the Impersonation Experiment",
       HE.button [HA.class' "green-button danger exit-experiment", HA.onClick QuitExperiment ] "Exit"
@@ -56,7 +57,7 @@ view { section, impersonation } = HE.div (HA.class' "impersonation") [
                   ]
             ]
 
-batman :: ImpresonationProfile
+batman :: ImpersonationProfile
 batman = {
       id : 1,
       name: "Batman",
@@ -72,7 +73,7 @@ batman = {
       age: Just 34
 }
 
-socrates :: ImpresonationProfile
+socrates :: ImpersonationProfile
 socrates = {
       id : 2,
       name: "Socrates",
@@ -92,7 +93,7 @@ Crito, we owe a rooster to Asclepius, make this offering to him and do not forge
       age: Just 71
 }
 
-nicolasCage :: ImpresonationProfile
+nicolasCage :: ImpersonationProfile
 nicolasCage = {
       id : 3,
       name: "Nicolas Cage",
@@ -110,7 +111,7 @@ Let me thank the awesome, multi-talented Mike Figgis. My incredible, amazing co-
       age: Just 57
 }
 
-impersonations :: HashMap PrimaryKey ImpresonationProfile
+impersonations :: HashMap Int ImpersonationProfile
 impersonations = DH.fromFoldable [Tuple batman.id batman, Tuple socrates.id socrates, Tuple nicolasCage.id nicolasCage]
 
 welcomeMessage :: String -> _

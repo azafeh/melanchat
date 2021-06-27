@@ -8,6 +8,7 @@ import Client.Common.Location as CCL
 import Data.Maybe (Maybe(..))
 import Effect.Class (liftEffect)
 import Flame (ListUpdate, (:>))
+import Shared.Experiments.Types
 import Flame as F
 import Flame.Subscription.Unsafe.CustomEvent as FSUC
 

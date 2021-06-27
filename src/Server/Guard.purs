@@ -27,7 +27,7 @@ guards configuration = {
       checkAnonymous: checkAnonymous configuration
 }
 
-checkLoggedUser :: Configuration -> Request -> Aff (Either (Response Empty) PrimaryKey)
+checkLoggedUser :: Configuration -> Request -> Aff (Either (Response Empty) Int)
 checkLoggedUser { tokenSecret } request = do
       cookies <- PSG.cookies request
       maybeUserID <- liftEffect $ ST.userIDFromToken tokenSecret <<< DMB.fromMaybe "" $ DM.lookup cookieName cookies

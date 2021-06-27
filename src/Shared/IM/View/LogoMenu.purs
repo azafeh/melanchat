@@ -9,6 +9,7 @@ import Data.String as DS
 import Flame (Html)
 import Flame.Html.Attribute as HA
 import Flame.Html.Element as HE
+import Shared.IM.Types
 import Shared.Path as SP
 
 logoMenu :: Maybe String -> Html IMMessage

@@ -13,8 +13,9 @@ import Data.Maybe (Maybe(..))
 import Data.Maybe as DM
 import Data.Newtype as DN
 import Data.String as DS
-import Data.Symbol (class IsSymbol, SProxy(..))
+import Data.Symbol (class IsSymbol)
 import Effect (Effect)
+import Type.Proxy(Proxy(..))
 import Effect.Aff (Aff, Milliseconds(..))
 import Effect.Aff as EA
 import Effect.Class (liftEffect)
@@ -24,6 +25,8 @@ import Flame.Subscription as FS
 import Prim.Row (class Cons)
 import Prim.Symbol (class Append)
 import Record as R
+import Shared.IM.Types
+import Shared.Experiments.Types
 import Shared.JSON as SJ
 import Shared.Options.MountPoint (imID)
 import Shared.Options.Profile (descriptionMaxCharacters, headlineMaxCharacters, nameMaxCharacters)
@@ -40,19 +43,19 @@ update rc@{ model, message, display } =
       case message of
             SelectAvatar -> selectAvatar
             SetPField setter -> pure setter
-            SetAvatar base64 -> pure <<< SS.setUserField (SProxy :: SProxy "avatar") $ Just base64
+            SetAvatar base64 -> pure <<< SS.setUserField (Proxy :: Proxy "avatar") $ Just base64
             SetGenerate what ->
                   case what of
-                        Name -> setGenerated rc Name (SProxy :: SProxy "name") nameMaxCharacters
-                        Headline -> setGenerated rc Headline (SProxy :: SProxy "headline") headlineMaxCharacters
-                        Description -> setGenerated rc Description (SProxy :: SProxy "description") descriptionMaxCharacters
+                        Name -> setGenerated rc Name (Proxy :: Proxy "name") nameMaxCharacters
+                        Headline -> setGenerated rc Headline (Proxy :: Proxy "headline") headlineMaxCharacters
+                        Description -> setGenerated rc Description (Proxy :: Proxy "description") descriptionMaxCharacters
             SetProfileChatExperiment experiment -> setChatExperiment experiment
             SaveProfile -> saveProfile rc
 
-setGenerated :: forall field fieldInputed r u . IsSymbol field => Cons field String r PU => IsSymbol fieldInputed => Append field "Inputed" fieldInputed => Cons fieldInputed (Maybe String) u PM => Environment ProfileModel ProfileMessage -> Generate -> SProxy field -> Int -> Aff (ProfileModel -> ProfileModel)
+setGenerated :: forall field fieldInputed r u . IsSymbol field => Cons field String r PU => IsSymbol fieldInputed => Append field "Inputed" fieldInputed => Cons fieldInputed (Maybe String) u PM => Environment ProfileModel ProfileMessage -> Generate -> Proxy field -> Int -> Aff (ProfileModel -> ProfileModel)
 setGenerated { model, display } what field characters = do
       display $ _ { generating = Just what }
-      let   fieldInputed = TDS.append field (SProxy :: SProxy "Inputed")
+      let   fieldInputed = TDS.append field (Proxy :: Proxy "Inputed")
             trimmed = DS.trim <<< DM.fromMaybe "" $ R.get fieldInputed model
 
       toSet <- if DS.null trimmed then do

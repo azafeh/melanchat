@@ -8,6 +8,7 @@ import Data.Array as DA
 import Data.Enum as DE
 import Data.Foldable as DF
 import Data.HashMap as DH
+import Shared.Experiments.Types
 import Data.Maybe (Maybe(..))
 import Data.Maybe as DM
 import Data.Newtype as DN
@@ -21,6 +22,7 @@ import Shared.Experiments.Impersonation (impersonations)
 import Shared.Experiments.Impersonation as SEI
 import Shared.IM.View.Profile as SIVP
 import Shared.IM.View.Retry as SIVR
+import Shared.IM.Types
 import Shared.Markdown as SM
 import Shared.Unsafe as SU
 

@@ -7,19 +7,22 @@ import Shared.Types
 import Control.Monad.Except (ExceptT)
 import Data.Argonaut.Decode (class DecodeJson)
 import Data.Argonaut.Decode as DAD
-import Data.Argonaut.Decode.Generic.Rep as DADGR
+import Data.Argonaut.Decode.Generic as DADGR
 import Data.Enum (class BoundedEnum, Cardinality(..), class Enum)
 import Data.Generic.Rep (class Generic)
 import Data.HashMap (HashMap)
 import Data.Maybe (Maybe(..))
+import Shared.IM.Types
 import Data.Newtype (class Newtype)
-import Database.PostgreSQL (PGError, Pool)
+import Type.Row (type (+))
 import Effect.Aff (Aff)
 import Effect.Ref (Ref)
+import Droplet.Driver(Pool)
 import Payload.ContentType (html)
 import Payload.Headers as PH
 import Payload.ResponseTypes as PR
 import Payload.Server.Response (class EncodeResponse)
+import Droplet.Driver(PgError)
 import Run (AFF, Run, EFFECT)
 import Run.Except (EXCEPT)
 import Run.Reader (READER)
@@ -32,7 +35,7 @@ type ProfileUserEdition = {
       headline :: String,
       description :: String,
       gender :: Maybe Gender,
-      country :: Maybe PrimaryKey,
+      country :: Maybe Int,
       tags :: Array String,
       birthday :: Maybe DateWrapper
 }
@@ -60,10 +63,8 @@ instance decodeCaptchaResponse :: DecodeJson CaptchaResponse where
             pure $ CaptchaResponse { success }
 
 type Session = {
-      userID :: Maybe PrimaryKey
+      userID :: Maybe Int
 }
-
-type PG result = ExceptT PGError Aff result
 
 type BaseReader extension = {
       storageDetails :: Ref StorageDetails,
@@ -72,9 +73,9 @@ type BaseReader extension = {
 }
 
 type WebSocketReader = BaseReader (
-      sessionUserID :: PrimaryKey,
+      sessionUserID :: Int,
       connection :: WebSocketConnection,
-      allConnections:: Ref (HashMap PrimaryKey AliveWebSocketConnection)
+      allConnections:: Ref (HashMap Int AliveWebSocketConnection)
 )
 
 type ServerReader = BaseReader (
@@ -82,12 +83,9 @@ type ServerReader = BaseReader (
       session :: Session
 )
 
-type BaseEffect r a = Run (
-      reader :: READER r,
-      except :: EXCEPT ResponseError,
-      aff :: AFF,
-      effect :: EFFECT
-) a
+type BaseEffect r a = Run (READER r + EXCEPT ResponseError + AFF + EFFECT + ()) a
+
+type DatabaseEffect a = Run (EXCEPT PgError + AFF + ()) a
 
 type ServerEffect a = BaseEffect ServerReader a
 

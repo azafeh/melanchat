@@ -18,7 +18,7 @@ import Server.IM.Action as SIA
 import Server.IM.Database as SID
 import Server.IM.Template as SIT
 
-im :: { guards :: { loggedUserID :: PrimaryKey } } -> ServerEffect (Response String)
+im :: { guards :: { loggedUserID :: Int } } -> ServerEffect (Response String)
 im { guards: { loggedUserID } } = do
       maybeUser <- SID.presentUser loggedUserID
       case maybeUser of
@@ -30,24 +30,24 @@ im { guards: { loggedUserID } } = do
                   contents <- R.liftEffect $ SIT.template { contacts, suggestions, user: DN.unwrap user }
                   pure <<< PSR.setHeaders (PH.fromFoldable [Tuple "content-type" html, Tuple "cache-control" "no-store, max-age=0"]) $ PSR.ok contents
 
-contacts :: { guards :: { loggedUserID :: PrimaryKey }, query :: { skip :: Int } } -> ServerEffect (Array Contact)
+contacts :: { guards :: { loggedUserID :: Int }, query :: { skip :: Int } } -> ServerEffect (Array Contact)
 contacts { guards: { loggedUserID }, query: { skip } } = SIA.listContacts loggedUserID skip
 
 --refactor: maybe contact instead of array contact
-singleContact :: { guards :: { loggedUserID :: PrimaryKey }, query :: { id :: PrimaryKey } } -> ServerEffect (Array Contact)
+singleContact :: { guards :: { loggedUserID :: Int }, query :: { id :: Int } } -> ServerEffect (Array Contact)
 singleContact { guards: { loggedUserID }, query: { id } } = DA.singleton <$> SIA.listSingleContact loggedUserID id
 
-history :: { guards :: { loggedUserID :: PrimaryKey }, query :: { skip :: Int, with :: PrimaryKey } } -> ServerEffect (Array HistoryMessage)
+history :: { guards :: { loggedUserID :: Int }, query :: { skip :: Int, with :: Int } } -> ServerEffect (Array HistoryMessage)
 history { guards: { loggedUserID }, query: { with, skip } } = SIA.resumeChatHistory loggedUserID with skip
 
-suggestions :: { guards :: { loggedUserID :: PrimaryKey }, query :: { skip :: Int, avoid :: Maybe ArrayPrimaryKey } } -> ServerEffect (Array Suggestion)
+suggestions :: { guards :: { loggedUserID :: Int }, query :: { skip :: Int, avoid :: Maybe ArrayPrimaryKey } } -> ServerEffect (Array Suggestion)
 suggestions { guards: { loggedUserID }, query: { skip, avoid } } = SIA.suggest loggedUserID skip avoid
 
-block :: { guards :: { loggedUserID :: PrimaryKey }, body :: { id :: PrimaryKey } } -> ServerEffect Ok
+block :: { guards :: { loggedUserID :: Int }, body :: { id :: Int } } -> ServerEffect Ok
 block { guards: { loggedUserID }, body: { id } } = SIA.blockUser loggedUserID id
 
-missedEvents :: { guards :: { loggedUserID :: PrimaryKey }, query :: { lastSenderID :: Maybe Int, lastRecipientID :: Maybe Int } } -> ServerEffect MissedEvents
+missedEvents :: { guards :: { loggedUserID :: Int }, query :: { lastSenderID :: Maybe Int, lastRecipientID :: Maybe Int } } -> ServerEffect MissedEvents
 missedEvents { guards: { loggedUserID }, query: { lastSenderID, lastRecipientID } } = SIA.listMissedEvents loggedUserID lastSenderID lastRecipientID
 
-report :: { guards :: { loggedUserID :: PrimaryKey }, body :: Report } -> ServerEffect Ok
+report :: { guards :: { loggedUserID :: Int }, body :: Report } -> ServerEffect Ok
 report { guards: { loggedUserID }, body } = SIA.reportUser loggedUserID body

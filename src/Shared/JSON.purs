@@ -3,10 +3,10 @@ module Shared.JSON where
 import Prelude
 
 import Data.Argonaut.Core as DAC
-import Data.Argonaut.Decode.Generic.Rep (class DecodeRep)
-import Data.Argonaut.Decode.Generic.Rep as DADGR
-import Data.Argonaut.Encode.Generic.Rep (class EncodeRep)
-import Data.Argonaut.Encode.Generic.Rep as DAEGR
+import Data.Argonaut.Decode.Generic (class DecodeRep)
+import Data.Argonaut.Decode.Generic as DADGR
+import Data.Argonaut.Encode.Generic (class EncodeRep)
+import Data.Argonaut.Encode.Generic as DAEGR
 import Data.Argonaut.Parser as DAP
 import Data.Either (Either(..))
 import Data.Either as DT

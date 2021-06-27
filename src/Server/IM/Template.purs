@@ -15,6 +15,7 @@ import Flame.Html.Element as HE
 import Server.Template (defaultParameters)
 import Server.Template as ST
 import Shared.IM.Unread as SIU
+import Shared.IM.Types
 import Shared.IM.View as SIV
 import Shared.Path (updateHash)
 import Shared.Path as SP

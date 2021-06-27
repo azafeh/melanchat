@@ -6,7 +6,7 @@ import Server.Types
 import Data.Maybe as DM
 import Data.String (Pattern(..))
 import Data.String as DS
-import Server.Database.User as SDU
+import Server.Database.Users as SDU
 import Server.Response as SR
 import Server.Token as ST
 import Shared.Options.Profile (emailMaxCharacters, passwordMaxCharacters, passwordMinCharacters)

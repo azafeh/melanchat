@@ -10,6 +10,7 @@ import Flame.Html.Attribute as HA
 import Flame.Html.Element as HE
 import Shared.Avatar as SA
 import Shared.Path as SP
+import Shared.Leaderboard.Types
 import Environment(leaderboardCSSHash)
 
 view :: LeaderboardModel -> Html LeaderboardMessage

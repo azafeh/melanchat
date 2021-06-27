@@ -5,6 +5,7 @@ import Shared.Types
 import Data.Maybe (Maybe(..))
 import Effect (Effect)
 import Flame (QuerySelector(..))
+import Shared.Experiments.Types
 import Flame as F
 import Shared.Experiments.View as SEV
 

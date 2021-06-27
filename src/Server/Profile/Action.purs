@@ -42,7 +42,7 @@ generate =
             Headline -> SB.generateHeadline
             Description -> SB.generateDescription
 
-saveProfile :: PrimaryKey -> ProfileUser -> ServerEffect Ok
+saveProfile :: Int -> ProfileUser -> ServerEffect Ok
 saveProfile loggedUserID profileUser@{ name, age, headline, description, avatar, languages, tags } = do
       when (isNull name || isNull headline || isNull description) $ SR.throwBadRequest missingRequiredFieldsMessage
       when anyFieldIsTooBig $ SR.throwBadRequest fieldTooBigMessage

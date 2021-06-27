@@ -5,6 +5,7 @@ import Shared.Types
 
 import Data.Foldable as DA
 import Flame (Html)
+import Shared.IM.Types
 import Flame.Html.Attribute as HA
 import Flame.Html.Element as HE
 

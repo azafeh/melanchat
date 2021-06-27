@@ -9,6 +9,7 @@ import Effect (Effect)
 import Flame (QuerySelector(..))
 import Flame as F
 import Flame.Html.Attribute as HA
+import Shared.Leaderboard.Types
 import Flame.Html.Element as HE
 import Flame.Renderer.String as FRS
 import Server.Template (defaultParameters)

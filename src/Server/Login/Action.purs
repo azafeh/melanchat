@@ -6,7 +6,7 @@ import Shared.Types
 
 import Data.Maybe (Maybe(..))
 import Server.AccountValidation as SA
-import Server.Database.User as SDU
+import Server.Database.Users as SDU
 import Server.Response as SR
 import Server.Token as ST
 
@@ -20,6 +20,6 @@ login { email: rawEmail, password } = do
       maybeUser <- SDU.userBy $ Email email
       case maybeUser of
             Nothing -> SR.throwBadRequest invalidLogin
-            Just (RegisterLoginUser user) -> do
+            Just user -> do
                   when (hash /= user.password) $ SR.throwBadRequest invalidLogin
                   ST.createToken user.id

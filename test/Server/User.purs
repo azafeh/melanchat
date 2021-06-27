@@ -1,11 +1,21 @@
 module Test.Server.User where
 
-import Database.PostgreSQL (Query(..), Row0(..))
+import Prelude
+import Droplet.Language
 import Server.Database as SD
+import Server.Database.Users
+import Data.Maybe(Maybe(..))
+import Shared.Unsafe as SU
 import Server.Types
+import Data.BigInt as DB
+import Server.Database.Fields
 
 userCount :: ServerEffect Int
-userCount = SD.scalar' (Query "select count(1) from users") Row0
+userCount = do
+    count <- SD.single $ select (count _id # as c) # from users
+    pure $ case count of
+        Just { c } -> SU.fromJust $ DB.toInt c
+        Nothing -> 0
 
 email :: String
 email = "e@a.com"

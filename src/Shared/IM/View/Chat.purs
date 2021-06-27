@@ -11,10 +11,12 @@ import Data.HashMap as HS
 import Data.Maybe (Maybe(..))
 import Data.Maybe as DM
 import Data.String as DS
-import Data.Symbol (class IsSymbol, SProxy(..))
+import Data.Symbol (class IsSymbol)
 import Data.Symbol as TDS
+import Type.Proxy(Proxy(..))
 import Data.Tuple (Tuple(..))
 import Effect.Unsafe as EU
+import Shared.IM.Types
 import Flame (Html)
 import Flame.Html.Attribute as HA
 import Flame.Html.Element as HE
@@ -40,10 +42,10 @@ linkModal :: IMModel -> Html IMMessage
 linkModal {toggleChatModal, linkText, link, erroredFields} =
       HE.div [HA.class' {"link-form modal-form": true, hidden: toggleChatModal /= ShowLinkForm }] [
             HE.label_ "Text",
-            HE.input [HA.type' "text", HA.placeholder "optional title", HA.value $ DM.fromMaybe "" linkText, HA.onInput (setJust (SProxy :: SProxy "linkText"))],
+            HE.input [HA.type' "text", HA.placeholder "optional title", HA.value $ DM.fromMaybe "" linkText, HA.onInput (setJust (Proxy :: Proxy "linkText"))],
             HE.label_ "Link",
-            HE.input [HA.type' "text", HA.id $ show LinkFormUrl, HA.placeholder "http://", HA.value $ DM.fromMaybe "" link, HA.onInput (setJust (SProxy :: SProxy "link"))],
-            HE.span [HA.class' {"error-message": true, "invisible": not (link /= Nothing && DA.elem (TDS.reflectSymbol (SProxy :: SProxy "link")) erroredFields) }] "Please enter a link",
+            HE.input [HA.type' "text", HA.id $ show LinkFormUrl, HA.placeholder "http://", HA.value $ DM.fromMaybe "" link, HA.onInput (setJust (Proxy :: Proxy "link"))],
+            HE.span [HA.class' {"error-message": true, "invisible": not (link /= Nothing && DA.elem (TDS.reflectSymbol (Proxy :: Proxy "link")) erroredFields) }] "Please enter a link",
             HE.div (HA.class' "buttons") [
                   HE.button [HA.class' "cancel", HA.onClick $ ToggleChatModal HideChatModal] "Cancel",
                   HE.button [HA.class' "green-button", HA.onClick InsertLink] "Insert"
@@ -62,14 +64,14 @@ imageModal {selectedImage, erroredFields} =
             ],
             HE.div (HA.class' "image-form-controls") [
                   HE.label_ "Caption",
-                  HE.input [HA.placeholder "optional title", HA.id $ show ImageFormCaption, HA.type' "text", HA.onInput (setJust (SProxy :: SProxy "imageCaption"))],
+                  HE.input [HA.placeholder "optional title", HA.id $ show ImageFormCaption, HA.type' "text", HA.onInput (setJust (Proxy :: Proxy "imageCaption"))],
                   HE.div (HA.class' "image-buttons") [
                         HE.button [HA.class' "cancel", HA.onClick $ ToggleChatModal HideChatModal] "Cancel",
                         HE.svg [HA.class' "svg-50 send-image-button", HA.onClick ForceBeforeSendMessage, HA.viewBox "0 0 16 16"] $ sendButtonElements "Send file"
                   ]
             ]
       ]
-      where imageValidationFailed = DA.elem (TDS.reflectSymbol (SProxy :: SProxy "selectedImage")) erroredFields
+      where imageValidationFailed = DA.elem (TDS.reflectSymbol (Proxy :: Proxy "selectedImage")) erroredFields
 
 chatBarInput :: ElementID -> IMModel -> Html IMMessage
 chatBarInput elementID model@{
@@ -141,7 +143,7 @@ chatBarInput elementID model@{
                   entry <- list !! i
                   pure $ accessor entry
 
-setJust :: forall t7 t8 t9. IsSymbol t8 => Cons t8 (Maybe t9) t7 IM => SProxy t8 -> t9 -> IMMessage
+setJust :: forall t7 t8 t9. IsSymbol t8 => Cons t8 (Maybe t9) t7 IM => Proxy t8 -> t9 -> IMMessage
 setJust field = SS.setIMField field <<< Just
 
 bold :: Html IMMessage

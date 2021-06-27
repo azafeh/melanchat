@@ -29,7 +29,7 @@ import Data.Array as DA
 import Data.Either (Either(..))
 import Data.Maybe (Maybe(..))
 import Data.Maybe as DM
-import Data.Symbol (SProxy(..))
+
 import Data.Symbol as TDS
 import Data.Tuple (Tuple(..))
 import Effect (Effect)
@@ -166,7 +166,7 @@ update { webSocketRef, fileReader } model =
             SpecialRequest (ReportUser userID) -> report userID webSocket model
       where { webSocket } = EU.unsafePerformEffect $ ER.read webSocketRef -- u n s a f e
 
-report :: PrimaryKey -> WebSocket -> IMModel -> MoreMessages
+report :: Int -> WebSocket -> IMModel -> MoreMessages
 report userID webSocket model@{ reportReason, reportComment } = case reportReason of
       Just rs -> CIS.updateAfterBlock userID (model {
             reportReason = Nothing,
@@ -180,7 +180,7 @@ report userID webSocket model@{ reportReason, reportComment } = case reportReaso
                         pure Nothing
       ]
       Nothing -> F.noMessages $ model {
-            erroredFields = [ TDS.reflectSymbol (SProxy :: SProxy "reportReason") ]
+            erroredFields = [ TDS.reflectSymbol (Proxy :: Proxy "reportReason") ]
       }
 
 askExperiment :: IMModel -> MoreMessages
@@ -367,13 +367,13 @@ receiveMessage webSocket isFocused wsPayload model@{
                   Nothing, Just (ImpersonationPayload { sender }) -> sender
                   _, _ -> true
 
-unsuggest :: PrimaryKey -> IMModel -> IMModel
+unsuggest :: Int -> IMModel -> IMModel
 unsuggest userID model@{ suggestions, suggesting } = model {
       suggestions = DA.filter ((userID /= _) <<< _.id) suggestions,
       suggesting = (\i -> if i == 0 then 0 else i - 1) <$> suggesting
 }
 
-processIncomingMessage :: ClientMessagePayload -> IMModel -> Either PrimaryKey IMModel
+processIncomingMessage :: ClientMessagePayload -> IMModel -> Either Int IMModel
 processIncomingMessage { id, userID, date, content, experimenting } model@{
       user: { id: recipientID },
       suggestions,
@@ -409,29 +409,29 @@ processIncomingMessage { id, userID, date, content, experimenting } model@{
                         Nothing, Just (ImpersonationPayload _), Nothing -> Nothing
                         _, _, _ -> updated
 
-findContact :: PrimaryKey -> Maybe PrimaryKey -> Maybe ExperimentData -> Contact -> Boolean
+findContact :: Int -> Maybe Int -> Maybe ExperimentData -> Contact -> Boolean
 findContact userID impersonationID experimenting { user: { id }, impersonating } = userID == id && (DM.isJust experimenting || impersonating == impersonationID)
 
-updateTemporaryID :: Array Contact -> PrimaryKey -> PrimaryKey -> PrimaryKey -> Array Contact
+updateTemporaryID :: Array Contact -> Int -> Int -> Int -> Array Contact
 updateTemporaryID contacts userID previousMessageID messageID = updateContactHistory contacts userID updateTemporary
       where updateTemporary history@( { id })
                   | id == previousMessageID = history { id = messageID, status = Received }
                   | otherwise = history
 
-updateStatus :: Array Contact -> PrimaryKey -> Array PrimaryKey -> MessageStatus -> Array Contact
+updateStatus :: Array Contact -> Int -> Array Int -> MessageStatus -> Array Contact
 updateStatus contacts userID ids status = updateContactHistory contacts userID updateSt
       where updateSt history@( { id })
                   | DA.elem id ids = history { status = status }
                   | otherwise = history
 
-markErroredMessage :: Array Contact -> PrimaryKey -> PrimaryKey -> Array Contact
+markErroredMessage :: Array Contact -> Int -> Int -> Array Contact
 markErroredMessage contacts userID messageID = updateContactHistory contacts userID updateStatus
       where updateStatus history@( { id })
                   | id == messageID = history { status = Errored }
                   | otherwise = history
 
 --refactor: should be abstract with updateReadCount
-updateContactHistory :: Array Contact -> PrimaryKey -> (HistoryMessage -> HistoryMessage) -> Array Contact
+updateContactHistory :: Array Contact -> Int -> (HistoryMessage -> HistoryMessage) -> Array Contact
 updateContactHistory contacts userID f = updateContact <$> contacts
       where updateContact contact@{ user: { id }, history }
                   | id == userID = contact {
@@ -439,7 +439,7 @@ updateContactHistory contacts userID f = updateContact <$> contacts
                   }
                   | otherwise = contact
 
-markContactUnavailable :: Array Contact -> PrimaryKey -> Array Contact
+markContactUnavailable :: Array Contact -> Int -> Array Contact
 markContactUnavailable contacts userID = updateContact <$> contacts
       where updateContact contact@{ user: { id }, history }
                   | id == userID = contact {
@@ -458,7 +458,7 @@ checkMissedEvents model@{ experimenting, contacts, user : { id } } =
                   CCNT.retryableResponse CheckMissedEvents ResumeMissedEvents (request.im.missedEvents { query: { lastSenderID: lastSentMessageID, lastRecipientID: lastReceivedMessageID } })
       ]
 
-findLastMessages :: Array Contact -> PrimaryKey -> { lastSentMessageID :: Maybe PrimaryKey, lastReceivedMessageID :: Maybe PrimaryKey }
+findLastMessages :: Array Contact -> Int -> { lastSentMessageID :: Maybe Int, lastReceivedMessageID :: Maybe Int }
 findLastMessages contacts sessionUserID = {
       lastSentMessageID: findLast (\h -> sessionUserID == h.sender && h.status == Received),
       lastReceivedMessageID: findLast ((sessionUserID /= _) <<< _.sender)

@@ -10,7 +10,7 @@ import Server.Profile.Action as SPA
 import Server.Profile.Database as SPD
 import Server.Profile.Template as SPT
 
-profile :: { guards :: { loggedUserID :: PrimaryKey } } -> ServerEffect String
+profile :: { guards :: { loggedUserID :: Int } } -> ServerEffect String
 profile { guards: { loggedUserID } } = do
       profileUser <- DN.unwrap <$> SPD.presentProfile loggedUserID
       countries <- SPD.presentCountries
@@ -21,8 +21,8 @@ profile { guards: { loggedUserID } } = do
             languages
       }
 
-profileUpdate :: { guards :: { loggedUserID :: PrimaryKey }, body :: ProfileUser } -> ServerEffect Ok
+profileUpdate :: { guards :: { loggedUserID :: Int }, body :: ProfileUser } -> ServerEffect Ok
 profileUpdate { guards: { loggedUserID }, body } = SPA.saveProfile loggedUserID body
 
-generate :: { guards :: { loggedUserID :: PrimaryKey }, query :: { what :: Generate } } -> ServerEffect String
+generate :: { guards :: { loggedUserID :: Int }, query :: { what :: Generate } } -> ServerEffect String
 generate { guards: { loggedUserID }, query: { what } } = SPA.generate what

@@ -15,7 +15,7 @@ import Flame.Renderer.String as FRS
 import Run as R
 import Server.AccountValidation as SA
 import Server.Captcha as SC
-import Server.Database.User as SDU
+import Server.Database.Users as SDU
 import Server.Email as SE
 import Server.Ok (ok)
 import Server.Recover.Database as SRD
@@ -37,7 +37,7 @@ recover { email: rawEmail, captchaResponse } = do
       user <- SDU.userBy $ Email email
       case user of
             Nothing -> SR.throwBadRequest accountNotFound
-            Just (RegisterLoginUser { id }) -> do
+            Just { id } -> do
                   token <- R.liftEffect (DU.toString <$> DU.genUUID)
                   SRD.insertRecover id token
                   contents <- R.liftEffect <<< FRS.render $ HE.html_ [

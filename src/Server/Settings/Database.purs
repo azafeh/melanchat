@@ -3,18 +3,20 @@ module Server.Settings.Database where
 import Prelude
 
 import Data.Tuple.Nested ((/\))
-import Database.PostgreSQL (Query(..), Row1(..))
+
+import Droplet.Language
+import Server.Database.Users
 import Server.Database as SD
 import Server.Types (ServerEffect)
-import Shared.Types (PrimaryKey)
+import Server.Database.Fields
 
-changeEmail :: PrimaryKey -> String -> ServerEffect Unit
-changeEmail loggedUserID email = SD.execute (Query "update users set email = $2 where id = $1") (loggedUserID /\ email)
+changeEmail :: Int -> String -> ServerEffect Unit
+changeEmail loggedUserID email = SD.execute $ update users # set (_email /\ email) # wher (_id .=. loggedUserID)
 
-changePassword :: PrimaryKey -> String -> ServerEffect Unit
-changePassword loggedUserID password = SD.execute (Query "update users set password = $2 where id = $1") (loggedUserID /\ password)
+changePassword :: Int -> String -> ServerEffect Unit
+changePassword loggedUserID password = SD.execute $ update users # set (_password /\ password) # wher (_id .=. loggedUserID)
 
-terminateAccount :: PrimaryKey -> ServerEffect Unit
-terminateAccount loggedUserID = SD.execute (Query "delete from users where id = $1") $ Row1 loggedUserID --cascades
+terminateAccount :: Int -> ServerEffect Unit
+terminateAccount loggedUserID = SD.execute $ delete # from users # wher (_id .=. loggedUserID) --cascades
 
 

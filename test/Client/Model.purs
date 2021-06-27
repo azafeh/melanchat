@@ -6,6 +6,7 @@ import Shared.Types
 import Data.HashMap (HashMap)
 import Data.HashMap as HS
 import Data.HashSet as DHS
+import Shared.IM.Types
 import Data.Maybe (Maybe(..))
 import Effect.Aff (Aff)
 import Effect.Now as EN
@@ -59,7 +60,7 @@ model = {
       chatting: Just 0
 }
 
-imUserID :: PrimaryKey
+imUserID :: Int
 imUserID = 23
 
 imUser :: IMUser
@@ -78,10 +79,10 @@ imUser = {
       karma: 5
 }
 
-anotherIMUserID :: PrimaryKey
+anotherIMUserID :: Int
 anotherIMUserID = 90
 
-contactID :: PrimaryKey
+contactID :: Int
 contactID = anotherIMUserID
 
 anotherIMUser :: IMUser
@@ -90,7 +91,7 @@ anotherIMUser = imUser { id = anotherIMUserID }
 contact :: Contact
 contact = SIC.defaultContact imUserID anotherIMUser
 
-suggestionID :: PrimaryKey
+suggestionID :: Int
 suggestionID =  300
 
 suggestion :: Suggestion

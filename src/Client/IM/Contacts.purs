@@ -20,8 +20,10 @@ import Data.Maybe as DM
 import Data.Tuple (Tuple(..))
 import Data.Tuple as DT
 import Effect.Class (liftEffect)
+import Shared.Experiments.Types
 import Flame ((:>))
 import Flame as F
+import Shared.IM.Types
 import Shared.IM.Contact as SIC
 import Shared.Unsafe ((!@))
 import Shared.Unsafe as SU
@@ -29,7 +31,7 @@ import Web.DOM.Element as WDE
 import Web.HTML.HTMLElement as WHH
 import Web.Socket.WebSocket (WebSocket)
 
-resumeChat :: PrimaryKey -> Maybe PrimaryKey -> IMModel -> MoreMessages
+resumeChat :: Int -> Maybe Int -> IMModel -> MoreMessages
 resumeChat searchID impersonating model@{ contacts, chatting, smallScreen } =
       let   index = DA.findIndex (\cnt -> cnt.user.id == searchID && cnt.impersonating == impersonating) contacts
             cnt@{ shouldFetchChatHistory, user: { id } } = SIC.chattingContact contacts index
@@ -68,7 +70,7 @@ markRead webSocket =
             model -> F.noMessages model
 
 updateStatus :: IMModel -> {
-      sessionUserID :: PrimaryKey,
+      sessionUserID :: Int,
       webSocket :: WebSocket,
       contacts :: Array Contact,
       index :: Int,
@@ -138,7 +140,7 @@ displayNewContacts :: Array Contact -> IMModel -> MoreMessages
 displayNewContacts newContacts model@{ contacts } = updateDisplayContacts newContacts (map (\cnt -> Tuple cnt.user.id cnt.impersonating) newContacts) model
 
 --new chats from impersonation experiment
-displayImpersonatedContacts :: PrimaryKey -> HistoryMessage -> Array Contact -> IMModel -> MoreMessages
+displayImpersonatedContacts :: Int -> HistoryMessage -> Array Contact -> IMModel -> MoreMessages
 displayImpersonatedContacts id history newContacts = displayNewContacts (map (_ { shouldFetchChatHistory = false, impersonating = Just id, history = [history] }) newContacts)
 
 resumeMissedEvents :: MissedEvents -> IMModel -> MoreMessages
@@ -181,7 +183,7 @@ resumeMissedEvents { contacts: missedContacts, messageIDs } model@{ contacts, us
             findContact {user: { id }} = DA.findIndex (sameContact id) contacts
             sameContact userID {user: { id }} = userID == id
 
-updateDisplayContacts :: Array Contact -> Array (Tuple PrimaryKey (Maybe PrimaryKey)) -> IMModel -> MoreMessages
+updateDisplayContacts :: Array Contact -> Array (Tuple Int (Maybe Int)) -> IMModel -> MoreMessages
 updateDisplayContacts newContacts userIDs model@{ contacts } =
       CIU.notifyUnreadChats (model {
             contacts = contacts <> newContacts,

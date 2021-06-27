@@ -3,7 +3,7 @@ module Server.Response where
 import Prelude
 import Server.Types
 import Shared.Types
-
+import Shared.IM.Types
 import Data.Maybe (Maybe(..))
 import Effect (Effect)
 import Run as R

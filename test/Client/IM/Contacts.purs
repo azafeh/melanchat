@@ -13,6 +13,7 @@ import Shared.Experiments.Impersonation (batman)
 import Shared.Unsafe ((!@))
 import Test.Client.Model (contact, historyMessage, imUser, imUserID, model, webSocket)
 import Test.Unit (TestSuite)
+import Shared.IM.Types
 import Test.Unit as TU
 import Test.Unit.Assert as TUA
 

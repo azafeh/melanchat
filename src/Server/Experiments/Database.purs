@@ -1,11 +1,15 @@
 module Server.Experiments.Database where
 
 import Shared.Types
-
-import Database.PostgreSQL (Query(..), Row0(..))
+import Prelude
+import Shared.Experiments.Types
 import Server.Database as SD
+import Droplet.Language
+import Data.Tuple.Nested((/\))
+import Server.Database.Fields
 import Server.Types (ServerEffect)
+import Server.Database.Experiments
 
 --could also order by popularity
-fecthExperiments :: ServerEffect (Array ChatExperimentWrapper)
-fecthExperiments = SD.select (Query "select id, code, name, description from experiments order by added desc") Row0
+fecthExperiments :: ServerEffect (Array ChatExperiment)
+fecthExperiments = SD.query $ select (_id /\ _code /\ _name /\ _description) # from experiments # orderBy (_added # desc)

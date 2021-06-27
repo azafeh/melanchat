@@ -18,6 +18,7 @@ import Data.Maybe as DM
 import Effect.Class (liftEffect)
 import Environment (experimentsJSHash, internalHelpJSHash, leaderboardCSSHash, leaderboardJSHash, profileJSHash, settingsJSHash)
 import Flame ((:>))
+import Shared.IM.Types
 import Flame as F
 import Shared.JSON as SJ
 import Shared.Routes (routes)

@@ -2,10 +2,11 @@ module Shared.IM.Svg where
 
 import Data.Array ((:))
 import Flame (Html)
+import Shared.IM.Types
 import Flame.Html.Attribute as HA
 import Flame.Html.Element as HE
 import Flame.Types (NodeData)
-import Shared.Types (IMMessage)
+
 
 arrow :: Array (NodeData IMMessage) -> Html IMMessage
 arrow attrs = HE.svg (HA.viewBox "0 0 16 16" : attrs) [

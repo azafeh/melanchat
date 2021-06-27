@@ -7,6 +7,7 @@ You can edit this file as you like.
 , repository = "https://github.com/melanchat/melanchat"
 , dependencies =
   [ "affjax"
+  , "argonaut"
   , "argonaut-generic"
   , "browser-cookies"
   , "console"
@@ -22,7 +23,6 @@ You can edit this file as you like.
   , "node-process"
   , "now"
   , "payload"
-  , "postgresql-client"
   , "prelude"
   , "psci-support"
   , "read"
@@ -33,6 +33,7 @@ You can edit this file as you like.
   , "web-dom"
   , "web-socket"
   , "web-storage"
+  , "droplet"
   , "web-uievents",
   "test-unit"
   ]

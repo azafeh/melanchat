@@ -2,7 +2,7 @@ module Shared.IM.Unread where
 
 import Prelude
 import Shared.Types
-
+import Shared.IM.Types
 import Data.Foldable as DF
 import Shared.Options.File (imageBasePath)
 
@@ -22,7 +22,7 @@ favicon =
       where name = imageBasePath <> "favicon"
             extension = ".ico"
 
-countUnreadChats :: PrimaryKey -> Array Contact -> Int
+countUnreadChats :: Int -> Array Contact -> Int
 countUnreadChats id = DF.foldl count 0
       where count total { history }
                   | DF.any isUnread history = total + 1

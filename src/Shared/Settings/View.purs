@@ -10,11 +10,13 @@ import Data.Maybe (Maybe(..))
 import Data.String (Pattern(..))
 import Data.String as DS
 import Data.String.CodePoints as DSC
-import Data.Symbol (class IsSymbol, SProxy(..))
+import Type.Proxy(Proxy(..))
+import Data.Symbol (class IsSymbol)
 import Flame (Html)
 import Flame.Html.Attribute (ToSpecialEvent)
 import Flame.Html.Attribute as HA
 import Flame.Html.Element as HE
+import Type.Proxy(Proxy(..))
 import Prim.Row (class Cons)
 import Prim.Symbol (class Append)
 import Record as R
@@ -32,7 +34,7 @@ view model =
             account model
       ]
 
-formId :: forall field. IsSymbol field => SProxy field -> String
+formId :: forall field. IsSymbol field => Proxy field -> String
 formId field = TDS.reflectSymbol field <> "-form"
 
 account :: SettingsModel -> Html SettingsMessage
@@ -48,11 +50,11 @@ account model@{ erroredFields, confirmTermination } =
             ],
             HE.div_ [
                   --REFACTOR: this be ugly
-                  fieldConfirmationSection (SProxy :: SProxy "email") "text" emailMaxCharacters validateEmail "Please enter a valid email" ChangeEmail,
+                  fieldConfirmationSection (Proxy :: Proxy "email") "text" emailMaxCharacters validateEmail "Please enter a valid email" ChangeEmail,
 
-                  fieldConfirmationSection (SProxy :: SProxy "password") "password" passwordMaxCharacters validatePassword ("Password must be " <> show passwordMinCharacters <> " characters or more") ChangePassword,
+                  fieldConfirmationSection (Proxy :: Proxy "password") "password" passwordMaxCharacters validatePassword ("Password must be " <> show passwordMinCharacters <> " characters or more") ChangePassword,
 
-                  HE.div (formId (SProxy :: SProxy "confirmTermination")) [
+                  HE.div (formId (Proxy :: Proxy "confirmTermination")) [
                         HE.label_ "Permanently delete all my data and close my account",
                         HE.div (HA.class' "section-buttons margined") [
                               HE.input [HA.type' "button", HA.value "Terminate account", HA.class' "green-button danger", HA.onClick ToggleTerminateAccount],
@@ -75,12 +77,12 @@ account model@{ erroredFields, confirmTermination } =
                   ]
             ]
       ]
-      where fieldConfirmationSection :: forall field fieldConfirmation r t. IsSymbol field => Cons field String r SM => Append field "Confirmation" fieldConfirmation => IsSymbol fieldConfirmation => Cons fieldConfirmation String t SM => SProxy field -> String -> Int -> (String -> Boolean) -> String -> SettingsMessage -> Html SettingsMessage
+      where fieldConfirmationSection :: forall field fieldConfirmation r t. IsSymbol field => Cons field String r SM => Append field "Confirmation" fieldConfirmation => IsSymbol fieldConfirmation => Cons fieldConfirmation String t SM => Proxy field -> String -> Int -> (String -> Boolean) -> String -> SettingsMessage -> Html SettingsMessage
             fieldConfirmationSection field inputType maxChars validator fieldErrorMessage message =
                   let   stringField = TDS.reflectSymbol field
                         capitalizedStringField = capitalize stringField
                         fieldValue = R.get field model
-                        fieldConfirmation = TDS.append field (SProxy :: SProxy "Confirmation")
+                        fieldConfirmation = TDS.append field (Proxy :: Proxy "Confirmation")
                         stringFieldConfirmation = TDS.reflectSymbol fieldConfirmation
                         fieldConfirmationValue = R.get fieldConfirmation model
                         hasErrors = DA.elem stringField erroredFields
@@ -133,7 +135,7 @@ validatePassword password = DS.length password >= passwordMinCharacters
 validatePasswordConfirmation :: String -> String -> Boolean
 validatePasswordConfirmation  password confirmation = password == confirmation
 
-setValidatedField :: forall field r. IsSymbol field => Cons field String r SM => (String -> Boolean) -> SProxy field -> String -> SettingsMessage
+setValidatedField :: forall field r. IsSymbol field => Cons field String r SM => (String -> Boolean) -> Proxy field -> String -> SettingsMessage
 setValidatedField validator field value = SetSField validated
       where stringField = TDS.reflectSymbol field
             validated model =

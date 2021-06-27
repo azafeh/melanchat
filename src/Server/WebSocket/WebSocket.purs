@@ -8,7 +8,7 @@ import Prelude
 import Data.DateTime (DateTime)
 import Data.Maybe (Maybe)
 import Data.Newtype (class Newtype)
-import Data.Symbol (SProxy(..))
+import Type.Proxy(Proxy(..))
 import Effect (Effect)
 import Effect.Exception (Error)
 import Effect.Uncurried (EffectFn1, EffectFn2, EffectFn3)
@@ -55,7 +55,7 @@ newtype CloseReason = CloseReason String
 -- | starts listening.
 createWebSocketServerWithPort :: forall options options' trash . Union options options' WebSocketServerOptions => Lacks "port" options => Cons "port" Port options trash => Port -> { | options } -> (Unit -> Effect Unit) -> Effect WebSocketServer
 createWebSocketServerWithPort (Port port) options callback = EU.runEffectFn2 createWebSocketServer_ options' callback'
-        where   options' = R.insert (SProxy :: SProxy "port") port options
+        where   options' = R.insert (Proxy :: Proxy "port") port options
                 callback' = EU.mkEffectFn1 callback
 
 -- | Attaches a connection event handler to a WebSocketServer

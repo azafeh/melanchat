@@ -6,5 +6,5 @@ import Shared.Types
 
 import Server.Fortune.Action as SFA
 
-fortune :: { guards :: { loggedUserID :: PrimaryKey } } -> ServerEffect String
+fortune :: { guards :: { loggedUserID :: Int } } -> ServerEffect String
 fortune _ = SFA.fortunate

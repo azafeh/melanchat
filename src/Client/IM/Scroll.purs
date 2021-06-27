@@ -4,6 +4,7 @@ import Prelude
 import Shared.Types
 
 import Client.Common.DOM as CCD
+import Shared.IM.Types
 import Data.Maybe (Maybe(..))
 import Effect (Effect)
 import Effect.Aff (Aff)

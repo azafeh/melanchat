@@ -16,9 +16,10 @@ import Effect.Aff (Aff)
 import Effect.Class (liftEffect)
 import Payload.Client (ClientResponse)
 import Shared.Options.Profile (passwordMinCharacters)
-import Shared.Types (ElementID(..), RegisterLogin)
+import Shared.Types (RegisterLogin)
 import Shared.Unsafe as SU
 import Web.DOM.Element (Element)
+import Shared.IM.Types
 import Web.DOM.Element as WDE
 import Web.HTML.Event.EventTypes (change, click)
 import Web.UIEvent.KeyboardEvent as WUK

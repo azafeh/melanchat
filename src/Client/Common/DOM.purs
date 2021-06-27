@@ -11,7 +11,8 @@ import Effect.Exception as EE
 import Effect.Uncurried (EffectFn1, EffectFn2)
 import Effect.Uncurried as EU
 import Shared.Path as SP
-import Shared.Types (ContentType(..), ElementID)
+import Shared.Types (ContentType(..))
+import Shared.IM.Types
 import Shared.Unsafe as SU
 import Web.DOM.Document as WDD
 import Web.DOM.Element (Element)

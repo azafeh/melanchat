@@ -8,6 +8,7 @@ import Environment (experimentsCSSHash)
 import Flame (Html)
 import Flame.Html.Attribute as HA
 import Flame.Html.Element as HE
+import Shared.Experiments.Types
 import Shared.Experiments.Impersonation as SEI
 import Shared.Path as SP
 

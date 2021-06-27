@@ -17,6 +17,7 @@ import Shared.IM.View.Profile as SIVP
 import Shared.IM.View.Suggestions as SIVS
 import Shared.IM.View.UserMenu as SIVU
 import Shared.Unsafe ((!@))
+import Shared.IM.Types
 
 view :: Boolean -> IMModel -> Html IMMessage
 view isClientRender model@{ enableNotificationsVisible, errorMessage, fortune, initialScreen, suggestions, suggesting, chatting, contacts, hasTriedToConnectYet, imUpdated, isWebSocketConnected, toggleModal, smallScreen } = HE.div [HA.class' "im"] [

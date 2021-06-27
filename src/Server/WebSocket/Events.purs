@@ -18,7 +18,7 @@ import Data.Maybe as DM
 import Data.Newtype as DN
 import Data.Time.Duration (Minutes)
 import Data.Tuple (Tuple(..))
-import Database.PostgreSQL (Pool)
+
 import Effect (Effect)
 import Effect.Aff as CMEC
 import Effect.Aff as EA
@@ -49,7 +49,7 @@ aliveDelay = 1000 * 60 * aliveDelayMinutes
 aliveDelayMinutes :: Int
 aliveDelayMinutes = 10
 
-handleConnection :: Configuration -> Pool -> Ref (HashMap PrimaryKey AliveWebSocketConnection) -> Ref StorageDetails -> WebSocketConnection -> Request -> Effect Unit
+handleConnection :: Configuration -> Pool -> Ref (HashMap Int AliveWebSocketConnection) -> Ref StorageDetails -> WebSocketConnection -> Request -> Effect Unit
 handleConnection c@{ tokenSecret } pool allConnections storageDetails connection request = do
       maybeUserID <- ST.userIDFromToken tokenSecret <<< DM.fromMaybe "" $ do
             uncooked <- FO.lookup "cookie" $ NH.requestHeaders request
@@ -83,7 +83,7 @@ handleConnection c@{ tokenSecret } pool allConnections storageDetails connection
 handleError :: Error -> Effect Unit
 handleError = EC.log <<< show
 
-handleClose :: Ref (HashMap PrimaryKey AliveWebSocketConnection) -> PrimaryKey -> CloseCode -> CloseReason -> Effect Unit
+handleClose :: Ref (HashMap Int AliveWebSocketConnection) -> Int -> CloseCode -> CloseReason -> Effect Unit
 handleClose allConnections id _ _ = ER.modify_ (DH.delete id) allConnections
 
 --REFACTOR: untangle the im logic from the websocket logic
@@ -150,7 +150,7 @@ handleMessage payload = do
 sendWebSocketMessage :: forall b. MonadEffect b => WebSocketConnection -> FullWebSocketPayloadClient -> b Unit
 sendWebSocketMessage connection = liftEffect <<< SW.sendMessage connection <<< WebSocketMessage <<< SJ.toJSON
 
-checkLastSeen :: Ref (HashMap PrimaryKey AliveWebSocketConnection) -> Effect Unit
+checkLastSeen :: Ref (HashMap Int AliveWebSocketConnection) -> Effect Unit
 checkLastSeen allConnections = do
       connections <- ER.read allConnections
       now <- EN.nowDateTime

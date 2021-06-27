@@ -8,6 +8,7 @@ import Client.Common.File as CCF
 import Client.Profile.Update as CPU
 import Data.Maybe (Maybe(..))
 import Effect (Effect)
+import Shared.IM.Types
 import Flame.Application.Effectful as FAE
 import Flame.Subscription as FS
 import Shared.Options.MountPoint (imID, profileID)

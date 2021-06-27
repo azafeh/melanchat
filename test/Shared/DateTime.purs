@@ -10,7 +10,6 @@ import Data.String.Regex as SR
 import Data.String.Regex.Flags (noFlags)
 import Data.String.Regex.Unsafe as SRU
 import Data.Time.Duration (Days(..))
-import Debug.Trace (spy)
 import Effect.Class (liftEffect)
 import Effect.Now as EN
 import Shared.DateTime as SD

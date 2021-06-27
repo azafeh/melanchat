@@ -3,20 +3,25 @@ module Server.Recover.Database where
 import Prelude
 import Server.Types
 import Shared.Types
-
+import Droplet.Language
+import Server.Database.Users
+import Server.Database.Recoveries
+import Server.Database.Fields
 import Data.Maybe (Maybe)
 import Data.Tuple.Nested ((/\))
-import Database.PostgreSQL (Query(..), Row1(..))
+
 import Server.Database as SD
 
 --REFACTOR: consider making the uuid token the primary key
-insertRecover :: PrimaryKey -> String -> ServerEffect Unit
-insertRecover id token = void $ SD.insert (Query "insert into recoveries (uuid, recoverer) values($1, $2)") (token /\ id)
+insertRecover :: Int -> String -> ServerEffect Unit
+insertRecover id token = void <<< SD.execute $ insert # into recoveries (_uuid /\ _recoverer) # values (token /\ id)
 
-selectRecoverer :: String -> ServerEffect (Maybe PrimaryKey)
-selectRecoverer token = SD.scalar (Query "select recoverer from recoveries where uuid = $1 and active = true and created >=  (now() at time zone 'utc') - interval '1 day'") $ Row1 token
+selectRecoverer :: String -> ServerEffect (Maybe Int)
+selectRecoverer token = do
+      result <- SD.unsafeSingle "select recoverer from recoveries where uuid = @token and active = true and created >= (now() at time zone 'utc') - interval '1 day'" {token} :: BaseEffect _ (Maybe {recoverer :: Int})
+      pure (_.recoverer <$> result)
 
-recoverPassword :: String -> PrimaryKey -> String -> ServerEffect Unit
+recoverPassword :: String -> Int -> String -> ServerEffect Unit
 recoverPassword token id password = SD.withTransaction $ \connection -> do
-      SD.executeWith connection (Query "update recoveries set active = false where uuid = $1") $ Row1 token
-      SD.executeWith connection (Query "update users set password = $1 where id = $2") (password /\ id)
+      SD.executeWith connection $ update recoveries # set (_active /\ false) # wher (_uuid .=. token)
+      SD.executeWith connection $ update users # set (_password /\ password) # wher (_id .=. id)

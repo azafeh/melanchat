@@ -5,8 +5,9 @@ import Prelude
 import Data.Maybe (Maybe(..))
 import Flame (Key)
 import Flame.Html.Event as HA
+import Shared.IM.Types
 import Flame.Types (NodeData)
-import Shared.Types (IMMessage)
+
 import Shared.Unsafe as SU
 import Web.Event.Event (Event)
 import Web.UIEvent.KeyboardEvent as WUK

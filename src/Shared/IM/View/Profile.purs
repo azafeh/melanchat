@@ -8,10 +8,13 @@ import Data.Array as DA
 import Data.HashMap as HS
 import Data.Maybe (Maybe(..))
 import Data.Maybe as DM
+import Shared.Experiments.Types
 import Flame (Html)
 import Flame.Html.Attribute as HA
 import Flame.Html.Element as HE
 import Shared.Avatar as SA
+import Shared.IM.Types
+
 import Shared.Experiments.Impersonation (impersonations)
 import Shared.Experiments.Impersonation as SEI
 import Shared.IM.Svg as SIA
@@ -157,7 +160,7 @@ nextArrow = HE.svg [HA.class' "svg-55", HA.viewBox "0 0 16 16"] [
       HE.polygon' [HA.class' "fillless strokeless", HA.points "11.02 7.99 6.53 3.5 5.61 4.42 9.17 7.99 5.58 11.58 6.5 12.5 10.09 8.91 10.1 8.91 11.02 7.99"]
 ]
 
-fullProfile :: ProfilePresentation -> Maybe Int -> IMModel -> Maybe PrimaryKey -> IMUser -> Html IMMessage
+fullProfile :: ProfilePresentation -> Maybe Int -> IMModel -> Maybe Int -> IMUser -> Html IMMessage
 fullProfile presentation index model@{ toggleContextMenu, freeToFetchSuggestions } impersonating user@{ id } =
       case presentation of
             FullContactProfile -> HE.div [HA.class' "suggestion old"] $ fullProfileMenu : profile
@@ -191,7 +194,7 @@ fullProfile presentation index model@{ toggleContextMenu, freeToFetchSuggestions
 
             loading = HE.div' $ HA.class' { loading: true, hidden: freeToFetchSuggestions }
 
-blockReport :: PrimaryKey -> Array (Html IMMessage)
+blockReport :: Int -> Array (Html IMMessage)
 blockReport id = [
       HE.div [HA.class' "user-menu-item menu-item-heading", HA.onClick <<< SpecialRequest $ BlockUser id] "Block",
       HE.div [HA.class' "user-menu-item menu-item-heading", HA.onClick <<< SpecialRequest <<< ToggleModal $ ShowReport id] "Report"

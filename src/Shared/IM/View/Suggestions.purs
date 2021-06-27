@@ -11,6 +11,7 @@ import Flame (Html)
 import Flame.Html.Attribute as HA
 import Flame.Html.Element as HE
 import Shared.IM.Svg as SIS
+import Shared.IM.Types
 import Shared.Avatar as SA
 
 suggestions :: IMModel -> Html IMMessage

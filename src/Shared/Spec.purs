@@ -3,7 +3,7 @@ module Shared.Spec where
 import Prelude
 import Server.Types
 import Shared.Types
-
+import Shared.IM.Types
 import Data.List (List)
 import Data.Maybe (Maybe)
 import Payload.Server.Handlers (File)
@@ -11,7 +11,7 @@ import Payload.Spec (type (:), GET, Guards, Nil, POST, Routes, Spec(..))
 
 spec :: Spec {
       guards :: {
-            loggedUserID :: PrimaryKey,
+            loggedUserID :: Int,
             checkAnonymous :: Unit
       },
       routes :: {
@@ -45,11 +45,11 @@ spec :: Spec {
                         response :: Array Contact
                   },
                   singleContact :: GET "/contact?id=<id>" {
-                        query :: { id :: PrimaryKey },
+                        query :: { id :: Int },
                         response :: Array Contact
                   },
                   history :: GET "/history?with=<with>&skip=<skip>" {
-                        query :: { skip :: Int, with :: PrimaryKey },
+                        query :: { skip :: Int, with :: Int },
                         response :: Array HistoryMessage
                   },
                   suggestions :: GET "/suggestions?skip=<skip>&avoid=<avoid>" {
@@ -57,7 +57,7 @@ spec :: Spec {
                         response :: Array Suggestion
                   },
                   block :: POST "/block" {
-                        body :: { id :: PrimaryKey },
+                        body :: { id :: Int },
                         response :: Ok
                   },
                   missedEvents :: GET "/missed?lastSenderID=<lastSenderID>&lastRecipientID=<lastRecipientID>" {

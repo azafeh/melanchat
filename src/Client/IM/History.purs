@@ -8,6 +8,7 @@ import Client.Common.DOM as CCD
 import Client.Common.Network (request)
 import Client.Common.Network as CCN
 import Client.IM.Flame as CIF
+import Shared.IM.Types
 import Client.IM.Scroll as CIS
 import Data.Array as DA
 import Data.Maybe (Maybe(..))

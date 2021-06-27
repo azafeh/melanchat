@@ -11,7 +11,7 @@ create table users
     password text not null,
     joined timestamp default (now() at time zone 'utc'),
     email text not null,
-    birthday timestamp,
+    birthday date,
     gender text,
     headline text not null,
     avatar text,

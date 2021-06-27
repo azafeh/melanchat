@@ -16,6 +16,7 @@ import Data.String as DS
 import Effect.Aff (Aff)
 import Effect.Class (liftEffect)
 import Effect.Console as EC
+import Shared.IM.Types
 import Effect.Exception as EE
 import Payload.Client (ClientError(..), ClientResponse, defaultOpts)
 import Payload.Client as PC

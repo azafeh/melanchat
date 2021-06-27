@@ -1,7 +1,8 @@
 module Shared.Options.MountPoint where
 
 import Flame (AppId(..))
-import Shared.Types (IMMessage, MountPoint(..), ProfileMessage)
+import Shared.Types
+import Shared.IM.Types
 
 profileID :: AppId MountPoint ProfileMessage
 profileID = AppId Profile
